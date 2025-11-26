@@ -84,14 +84,142 @@ class LinkedList {
         } else {
             let element;
             let prev = this.head;
-            while(prev.next) {
+            
+            for(let i = 0; i < this.size - 2; i++){
                 prev = prev.next
             }
-            element = prev.value;
+            element = prev.next;
+            prev.next = element.next;
+
             this.size--
-            return element
+            return element.value
         }
     }
+
+    tail() {
+        if(this.isEmpty()) {
+            return null
+        }
+        if(!this.head.next) {
+            return this.head;
+        }
+        let prev = this.head;
+        let element
+        while(prev.next) {
+            prev = prev.next
+        }
+        element = prev;
+        return element.value
+    }
+
+    contains(value) {
+        if(this.isEmpty()) {
+            return false;
+        }
+        if(this.head === value) {
+            return true
+        }
+        let prev = this.head;
+        while(prev && prev.next.value !== value) {
+            prev = prev.next;
+        }
+        if(prev.next.value === value) {
+            return true
+        } else {
+            return false
+        }
+        } 
+
+        find(value) {
+            if(this.isEmpty()) {
+                return null;
+            }
+            if(this.head.value === value) {
+                return 0;
+            }
+            let prev = this.head;
+            let i = 1;
+            while(prev && prev.next.value !== value) {
+                prev = prev.next
+                i++
+            }
+
+            if(prev.next.value === value) {
+                return i;
+            } else {
+                return null;
+            }
+        }
+
+        toString() {
+            if (!this.head) return "null";
+            
+            let result = "";
+            let current = this.head;
+            
+            while (current) {
+                result += `( ${current.value} ) -> `;
+                current = current.next;
+            }
+            
+            return result + "null";
+        }
+
+        at(index) {
+            if(this.size < 0 || index > this.size) {
+                return 'not found'
+            }
+
+            let prev = this.head
+            for(let j = 0; j < index; j++) {
+                prev = prev.next
+            }
+            let element = prev
+            return element.value
+        }
+
+        inserts(value, index) {
+            if(index < 0 || index > this.size)
+            if (index === 0) {
+                this.prepend(value)
+            }
+
+            const node = new Node(value);
+            if(!this.head) {
+                this.head = node
+            }
+
+            let prev = this.head
+            for(let j = 0; j < index - 1; j++) {
+                prev = prev.next
+            }
+            node.next = prev.next
+            prev.next = node
+            this.size++
+        }
+
+        removeAt(index) {
+            if(index < 0 || this.size < index) {
+                return
+            }
+            let removed
+            if(index === 0) {
+                this.head = this.head.next;
+                removed = this.head
+                return removed.value;
+            }
+            let prev = this.head
+            for(let j=0; j < index - 1; j++) {
+                prev = prev.next
+            }
+            removed = prev.next;
+            prev.next = prev.next.next
+            this.size--
+
+            return removed.value
+        }
+
+
 }
 
 const list = new LinkedList();
@@ -101,9 +229,9 @@ list.append('dog');
 list.append('cat');
 list.append('goat');
 list.prepend('cow');
-list.prepend('camel')
-console.log(list.pop());
-console.log(list.getSize());
-console.log(list.isEmpty());
+list.prepend('camel');
+list.inserts('pig', 3)
 list.print();
-console.log(list.getHead());
+console.log(list.at(2))
+console.log(list.removeAt(3))
+console.log(list.toString());
