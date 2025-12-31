@@ -8,49 +8,51 @@ class Node {
 
 //linked list class
 class LinkedList {
-    constructor() {
-        this.head = null;
-        this.size = 0;
+    constructor(value) {
+        const newNode = new Node(value)
+        this.head = newNode;
+        this.tail = this.head;
+        this.length = 1;
     }
 
     //check if empty
-    isEmpty() {
-        return this.size === 0;
-    }
+    
 
     //append
     append(value) {
-        const node = new Node(value);
-        if (this.isEmpty()) {
-            this.head = node;
-        } else {
-            let prev = this.head;
-            while(prev.next) {
-                prev = prev.next
-            }
-            prev.next = node;
-            
+        const newNode = new Node(value);
+        if(!this.head) {
+            this.head = newNode;
+            this.tail = newNode;
         }
-        this.size++
+        let prev = this.head;
+        while(prev.next) {
+            prev = prev.next;
+        }
+        prev.next = newNode;
+        this.tail = newNode;
+        this.length++;
+        
     }
 
     prepend(value) {
-        const node = new Node(value);
-        if(this.isEmpty()) {
-            this.head = node;
-            
-        } else {
-            
-            node.next = this.head;
-            this.head = node;
-        }
-        this.size++
+        const newNode = new Node(value);
+        if(!this.head) {
+            this.head = newNode;
+            this.tail = newNode;
+        } 
+
+            newNode.next = this.head;
+            this.head = newNode;
         
+
+        this.length++;
+    
     }
 
     //check the size
     getSize() {
-        return this.size;
+        return this.length;
     }
 
     //get the head
@@ -64,7 +66,7 @@ class LinkedList {
 
     print() {
 
-        if(this.isEmpty()) {
+        if(!this.head) {
            console.log('list is empty')
         } else {
             let prev = this.head
@@ -79,76 +81,63 @@ class LinkedList {
     }
 
     pop() {
-        if(this.isEmpty()) {
-            return null
-        } else {
-            let element;
-            let prev = this.head;
-            
-            for(let i = 0; i < this.size - 2; i++){
-                prev = prev.next
-            }
-            element = prev.next;
-            prev.next = element.next;
+       if(!this.head) return null;
+       let temp = this.head;
+       let prev = null;
+       while(temp.next) {
+        prev = temp;
+        temp = temp.next;
+       }
+       prev.next = null;
+       this.tail = prev;
+       this.length--
+       if(this.length === 0) {
+        this.head = null;
+        this.tail = null;
+       }
 
-            this.size--
-            return element.value
-        }
+       return temp.value;
+    }
+
+    shift() {
+        if(!this.head) return undefined;
+        let prev = this.head;
+        this.head = this.head.next;
+        prev.next = null
+
+        return prev.value;
     }
 
     tail() {
-        if(this.isEmpty()) {
-            return null
-        }
-        if(!this.head.next) {
-            return this.head;
-        }
-        let prev = this.head;
-        let element
-        while(prev.next) {
-            prev = prev.next
-        }
-        element = prev;
-        return element.value
+        if(!this.head) return undefined;
+
+        return this.tail;
+        
     }
 
     contains(value) {
-        if(this.isEmpty()) {
-            return false;
-        }
-        if(this.head === value) {
-            return true
-        }
+        
+        if(!this.head) return false;
         let prev = this.head;
-        while(prev && prev.next.value !== value) {
+        while(prev !== null) {
+            if(prev.value === value) return true;
             prev = prev.next;
         }
-        if(prev.next.value === value) {
-            return true
-        } else {
-            return false
-        }
+        return false;
         } 
 
         find(value) {
-            if(this.isEmpty()) {
-                return null;
-            }
-            if(this.head.value === value) {
-                return 0;
-            }
+            if(!this.head) return null;
             let prev = this.head;
-            let i = 1;
-            while(prev && prev.next.value !== value) {
-                prev = prev.next
-                i++
+            let index = 0;
+            while(prev) {
+                if(prev.value === value) {
+                    return index;
+                }
+                index++;
+                prev = prev.next;
             }
-
-            if(prev.next.value === value) {
-                return i;
-            } else {
-                return null;
-            }
+            return 'not found';
         }
 
         toString() {
@@ -166,72 +155,67 @@ class LinkedList {
         }
 
         at(index) {
-            if(this.size < 0 || index > this.size) {
-                return 'not found'
+            if(!this.head) return null;
+            if(index < 0 || index >= this.length) return null;
+            let prev = this.head;
+            for(let i = 0; i < index; i++) {
+                prev = prev.next;
             }
-
-            let prev = this.head
-            for(let j = 0; j < index; j++) {
-                prev = prev.next
-            }
-            let element = prev
-            return element.value
+            return prev;
         }
 
         inserts(value, index) {
-            if(index < 0 || index > this.size)
-            if (index === 0) {
-                this.prepend(value)
+            if(index === 0) return this.prepend(value);
+            if(index === this.length) return this.append(value);
+            if(index < 0 || index > this.length) return null;
+
+            
+                const newNode = new Node(value);
+
+                let before =this.at(index - 1)
+                newNode.next = before.next;
+                before.next = newNode;
+            
             }
 
-            const node = new Node(value);
-            if(!this.head) {
-                this.head = node
-            }
+            
 
-            let prev = this.head
-            for(let j = 0; j < index - 1; j++) {
-                prev = prev.next
-            }
-            node.next = prev.next
-            prev.next = node
-            this.size++
-        }
+
+            
+        
 
         removeAt(index) {
-            if(index < 0 || this.size < index) {
-                return
-            }
-            let removed
-            if(index === 0) {
-                this.head = this.head.next;
-                removed = this.head
-                return removed.value;
-            }
-            let prev = this.head
-            for(let j=0; j < index - 1; j++) {
-                prev = prev.next
-            }
-            removed = prev.next;
-            prev.next = prev.next.next
-            this.size--
+            if(index === 0) return this.shift();
+            if(index === this.length) return this.pop();
+            if(index < 0 || index > this.length) return null;
 
-            return removed.value
+            let before = this.at(index - 1);
+            let temp = before.next;
+            before.next = before.next.next;
+
+            return temp;
         }
 
 
 }
 
-const list = new LinkedList();
-console.log(list.getSize());
-console.log(list.isEmpty());
+const list = new LinkedList('gorrila');
+
 list.append('dog');
 list.append('cat');
 list.append('goat');
 list.prepend('cow');
 list.prepend('camel');
-list.inserts('pig', 3)
+console.log(list.getHead())
+console.log(list.pop());
+console.log(list.find('dog'))
+console.log(list.shift());
+
+list.inserts('pig', 0)
 list.print();
+console.log(list.contains('dog'));
+
 console.log(list.at(2))
-console.log(list.removeAt(3))
+//console.log(list.removeAt(3))
+list.print();
 console.log(list.toString());
